@@ -114,6 +114,8 @@ if ( products_unclear[index] && products_unclear[index].length > 7)
 }
  
 console.log(products);
+console.log(result2[0]);
+console.log(`Tarih: ${tarih[0]}`);
 
 let tarihjson;
 if (result2[0])

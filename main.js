@@ -149,19 +149,30 @@ function regex(text) {
     total_amount: total_amount,
   });
 
+  // if ((sp.includes("ADET") ||
+  //     sp.includes("Adt")  ||
+  //     sp.includes("KG")) &&
+  //     !sp.includes("*")
+  //     ) {
+  //   console.log("2. ci tip!!!");
+  // }
+
+  let result_products = process_type1_receipt(products)
+
+  result.push(...result_products)
+
+  console.log(result);
+  return result;
+}
+
+function process_type1_receipt(products) {
+  let return_result = []
   let p_quantity = 1;
   let p_name = null;
   let p_ratiokdv = null;
   let p_unitPrice = null;
   let p_category = null;
-
-  if ((sp.includes("ADET") ||
-      sp.includes("Adt")  ||
-      sp.includes("KG")) &&
-      !sp.includes("*")
-      ) {
-    console.log("2. ci tip!!!");
-  }
+  let tmp = null;
 
   for (const product of products) {
     console.log("Product:" + product);
@@ -173,7 +184,7 @@ function regex(text) {
       p_ratiokdv = tmp[1]
     }
 
-    result.push({
+    return_result.push({
       name: p_name,
       quantity: p_quantity,
       unitPrice: p_unitPrice,
@@ -187,6 +198,5 @@ function regex(text) {
     p_ratiokdv = null;
   }
 
-  console.log(result);
-  return result;
+  return return_result
 }

@@ -3,6 +3,8 @@ const express = require("express");
 const app = express();
 const multer = require("multer");
 
+const PORT = process.env.PORT || 5000
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "./uploads/");
@@ -41,8 +43,8 @@ app.post("/api/upload", upload.single("uploadedImage"), (req, res) => {
   }
 });
 
-app.listen(9001, () => {
-  console.log("server running..");
+app.listen(PORT, () => {
+  console.log(`Listening on ${PORT}`);
 });
 
 function regex(text) {

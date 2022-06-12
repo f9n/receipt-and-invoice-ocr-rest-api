@@ -48,14 +48,13 @@ app.listen(PORT, () => {
 var floating_regex = /\d+[,.]?\d+/;
 
 function regex(text) {
-    
   /*console.log(text)*/
-  let sp = text.split('\n')
+  let sp = text.split("\n");
 
   var result = [];
   var result2 = [];
   var tarih = null;
-  let total_kdv   = null;
+  let total_kdv = null;
   let total_amount = null;
   var products = [];
   var products_unclear = [];
@@ -64,117 +63,106 @@ function regex(text) {
   let str1 = null;
   let product_index;
 
-
   for (let index = 0; index < sp.length; index++) {
-    if (sp[index] != '' )
-    result2.push({line: sp[index]});
+    if (sp[index] != "") result2.push({ line: sp[index] });
   }
   console.log(result2);
 
   for (let index = 0; index < sp.length; index++) {
-    console.log("1");
-   // if (sp[index].includes("TARİH") ){
-    if (sp[index].match(/\d{2}([\/.-])\d{2}\1\d{4}/g) ){
+    // if (sp[index].includes("TARİH") ){
+    if (sp[index].match(/\d{2}([\/.-])\d{2}\1\d{4}/g)) {
       var tarih = sp[index].match(/\d{2}([\/.-])\d{2}\1\d{4}/g);
       //result.push({TARİH: tarih});
     }
-    
+
     console.log("11" + "sp:" + sp[index] + "index" + index);
-    if (sp[index].includes("KDV") || sp[index].includes("KDY") ){
-      total_kdv = sp[index].match(floating_regex);
-      console.log(`total_kdv: ${total_kdv}`)
-      product_index = index
+    if (sp[index].includes("KDV") || sp[index].includes("KDY")) {
+      if (product_index == null) {
+        total_kdv = sp[index].match(floating_regex);
+        product_index = index;
+        console.log(`total_kdv: ${total_kdv}`);
+        console.log(`index: ${index}`);
+      }
     } else {
       if (sp[index].includes("TOP")) {
         total_amount = sp[index].match(floating_regex);
-        console.log(`total_amount: ${total_amount}`)
+        console.log(`total_amount: ${total_amount}`);
       }
     }
-    
   }
   console.log(product_index);
   product_index--;
-  while ( product_index >= 0 && (!sp[product_index].includes("FİŞ") && !sp[product_index].includes("SAAT") && !sp[product_index].includes("FIS") ) ){
-
-    products_unclear.push(sp[product_index])
+  while (
+    product_index >= 0 &&
+    !sp[product_index].includes("FİŞ") &&
+    !sp[product_index].includes("SAAT") &&
+    !sp[product_index].includes("FIS")
+  ) {
+    products_unclear.push(sp[product_index]);
     product_index--;
-    
   }
-  console.log("u nclear:" + products_unclear);
+  console.log(`Unclear: ${products_unclear}`);
   for (let index = 0; index < products_unclear.length; index++) {
-  if ( products_unclear[index] && products_unclear[index].length > 7)
-            products.push(products_unclear[index]);  
+    if (products_unclear[index] && products_unclear[index].length > 7)
+      products.push(products_unclear[index]);
   }
- 
+
   console.log(products);
   console.log(result2[0]);
   console.log(`Tarih: ${tarih}`);
 
   let firmjson;
-  if (result2[0]) firmjson = result2[0].line
+  if (result2[0]) firmjson = result2[0].line;
 
-  result.push({firm: firmjson,
-               date: tarih,
-               no: null,
-               total_kdv: total_kdv,
-               total_amount: total_amount});
+  result.push({
+    firm: firmjson,
+    date: tarih,
+    no: null,
+    total_kdv: total_kdv,
+    total_amount: total_amount,
+  });
 
   let p_tutar = null;
   let p_adet = null;
   let p_name = null;
-  let p_kdv  = null;
-  let category;
+  let p_kdv = null;
+  let p_category = null;
   var length_pro = null;
 
-  for (let index = 0; index < products.length; index++) {
-    const element = products[index];
-     length_pro = element;
-    console.log("element:" + element);
-    if (element.includes('*')){
-       length_pro = element.split('*');
-      p_tutar = length_pro[1];
-    }
+  /*
+                                                  [
+    2022-06-12T18:37:31.703243+00:00 app[web.1]:   'Kredi Kartı *81,90',
+    2022-06-12T18:37:31.703244+00:00 app[web.1]:   'TOPLAM «81,90',
+    2022-06-12T18:37:31.703244+00:00 app[web.1]:   'TOPKDV x12, 49',
+    2022-06-12T18:37:31.703244+00:00 app[web.1]:   'GLADE SPORT MANGOK#LAVAN 415 x29,90',
+    2022-06-12T18:37:31.703244+00:00 app[web.1]:   'AUTOMIX PDA TUTUCU 118 *52,00',
+    2022-06-12T18:37:31.703244+00:00 app[web.1]:   'Fiş NO : 0182'
+    2022-06-12T18:37:31.703244+00:00 app[web.1]: ]
 
-    if (!length_pro) length_pro = element;
+  */
 
-    if (length_pro[0].includes('%')){
-       length_pro = length_pro[0].split('%');
-      p_kdv = length_pro[1];
-    }
-   
+  for (const product of products) {
+    console.log("Product:" + product);
 
-    if (length_pro[0].includes('X')){
-      let length_pro = length_pro[0].split('X');
-      p_adet = length_pro[1];
-    }
+    result.push({
+      name: p_name,
+      quantity: p_adet,
+      unitPrice: p_tutar,
+      ratiokdv: p_kdv,
+      category: p_category,
+    });
 
-    if (length_pro[0].length > 1)
-    p_name= length_pro[0]
-    else p_name = length_pro
-
-           result.push(
-             {name: p_name,
-              quantity: p_adet,
-              unitPrice: p_tutar,
-              ratiokdv: p_kdv,
-            category:null});
-
-    
-            p_adet = null;
-            p_kdv  = null;
-            p_name = null;
-            p_tutar = null;
-            
-            
+    p_adet = null;
+    p_kdv = null;
+    p_name = null;
+    p_tutar = null;
   }
 
   console.log(result);
   return result;
 }
 
-
 function regex2(text) {
-
   // let sp = text.split("\r\n");
   let sp = text.split("\n");
 

@@ -133,7 +133,6 @@ function regex(text) {
       products.push(products_unclear[index]);
   }
 
-  console.log(products);
   console.log(`Date: ${date}`);
 
   let firm;
@@ -183,8 +182,11 @@ function process_type2_receipt(products) {
   let quantity_flag = false;
 
   let _products = products.reverse();
+  console.log(_products)
 
   for (const product of _products) {
+    console.log("Product:" + product);
+
     // 1. ci adeti
     if (
       (product.includes("ADET") ||
@@ -252,6 +254,8 @@ function process_type1_receipt(products) {
   let p_unitPrice = null;
   let p_category = null;
   let tmp = null;
+
+  console.log(products)
 
   for (const product of products) {
     console.log("Product:" + product);

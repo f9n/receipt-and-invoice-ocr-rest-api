@@ -45,7 +45,11 @@ app.listen(PORT, () => {
   console.log(`Listening on ${PORT}`);
 });
 
+// https://github.com/f9n/receipt-and-invoice-rest-api/blob/main/contrib/images/receipts/WhatsApp%20Image%202021-12-07%20at%2009.38.10%20(6).jpeg
+
 var floating_regex = /\d+[,.]?\d+/;
+var verbal_regex = /[a-zA-Z \#]+/;
+var kdv_regex = /%\d{2}/;
 
 function regex(text) {
   /*console.log(text)*/
@@ -96,7 +100,9 @@ function regex(text) {
     product_index >= 0 &&
     !sp[product_index].includes("FİŞ") &&
     !sp[product_index].includes("SAAT") &&
-    !sp[product_index].includes("FIS")
+    !sp[product_index].includes("FIS") &&
+    !sp[product_index].includes("Fiş") &&
+    !sp[product_index].includes("NO")
   ) {
     products_unclear.push(sp[product_index]);
     product_index--;
@@ -122,12 +128,11 @@ function regex(text) {
     total_amount: total_amount,
   });
 
-  let p_tutar = null;
-  let p_adet = null;
+  let p_quantity = null;
   let p_name = null;
-  let p_kdv = null;
+  let p_ratiokdv = null;
+  let p_unitPrice = null;
   let p_category = null;
-  var length_pro = null;
 
   /*
                                                   [
@@ -138,24 +143,27 @@ function regex(text) {
     2022-06-12T18:37:31.703244+00:00 app[web.1]:   'AUTOMIX PDA TUTUCU 118 *52,00',
     2022-06-12T18:37:31.703244+00:00 app[web.1]:   'Fiş NO : 0182'
     2022-06-12T18:37:31.703244+00:00 app[web.1]: ]
-
   */
 
   for (const product of products) {
     console.log("Product:" + product);
 
+    p_unitPrice = product.match(floating_regex);
+    p_name = product.match(verbal_regex);
+    p_ratiokdv = product.match(kdv_regex);
+
     result.push({
       name: p_name,
-      quantity: p_adet,
-      unitPrice: p_tutar,
-      ratiokdv: p_kdv,
+      quantity: p_quantity,
+      unitPrice: p_unitPrice,
+      ratiokdv: p_ratiokdv,
       category: p_category,
     });
 
-    p_adet = null;
-    p_kdv = null;
     p_name = null;
-    p_tutar = null;
+    p_quantity = null;
+    p_unitPrice = null;
+    p_ratiokdv = null;
   }
 
   console.log(result);

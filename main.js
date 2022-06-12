@@ -80,9 +80,10 @@ function regex(text) {
     }
     
     console.log("11" + "sp:" + sp[index] + "index" + index);
-    if (sp[index].includes("KDV") ){
+    if (sp[index].includes("KDV") || sp[index].includes("KDY") ){
       total_kdv = sp[index].match(floating_regex);
       console.log(`total_kdv: ${total_kdv}`)
+      product_index = index
     } else {
       if (sp[index].includes("TOP")) {
         total_amount = sp[index].match(floating_regex);

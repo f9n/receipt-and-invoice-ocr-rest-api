@@ -93,8 +93,11 @@ function regex(text) {
       if (sp[index].includes("TOP") )
        str1 = sp[index].split('*');
        console.log("alooo" + str1);
-        if (str1[1] != null)
-      tutar = str1[1];
+       if (str1 != null) {
+         if (str1.length >= 2 ) {
+          tutar = str1[1];
+         }
+       }
     }
     
   }

@@ -20,6 +20,10 @@ const config = {
 
 const upload = multer({ storage: storage });
 
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
+
 app.post("/api/upload", upload.single("uploadedImage"), (req, res) => {
   console.log(req.file);
   try {

@@ -49,7 +49,8 @@ app.listen(PORT, () => {
 
 function regex(text) {
   /*console.log(text)*/
-  let sp = text.split("\r\n");
+  // let sp = text.split("\r\n");
+  let sp = text.split("\n");
   var result = [];
   var result2 = [];
   var tarih = null;
@@ -76,6 +77,7 @@ function regex(text) {
 
     if (sp[index].includes("KDV")) {
       product_index = index;
+      console.log(`ProductIndex: ${product_index}`)
       str = sp[index].split("*");
 
       if (str != null) {
@@ -98,6 +100,7 @@ function regex(text) {
     products_unclear.push(sp[product_index]);
     product_index--;
   }
+  console.log(`ProductIndex: ${product_index}`)
   for (let index = 0; index < products_unclear.length; index++) {
     if (products_unclear[index] && products_unclear[index].length > 7)
       products.push(products_unclear[index]);

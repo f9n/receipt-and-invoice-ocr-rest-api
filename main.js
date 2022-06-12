@@ -53,10 +53,10 @@ function replaceAll(string, search, replace) {
 
 var floating_regex = /\d+[,.]?\d+/;
 var total_kdv_regex = /\d+[,.]?\d+/;
-var verbal_regex = /[a-zA-Z \#]+/;
+var verbal_regex = /[^\d]+/;
 // var document_no_regex = /[ ]?[Nn][Oo]\:[ ]?\d+/;
 var product_amount_regex = /\d+[,.]?\d+$/;
-var product_kdv_regex = /%\d{2}/;
+var product_kdv_regex = /[%Xx](\d{2})/;
 
 
 function regex(text) {
@@ -73,6 +73,7 @@ function regex(text) {
   var products_unclear = [];
   let product_index;
   let _total_kdv;
+  let tmp;
 
   for (let index = 0; index < sp.length; index++) {
     if (sp[index] != "") result2.push({ line: sp[index] });
@@ -104,7 +105,8 @@ function regex(text) {
     // document_no = sp[index].match(document_no_regex);
     if (sp[index].includes("FİŞ") ||
         sp[index].includes("FIS") ||
-        sp[index].includes("Fiş")) {
+        sp[index].includes("Fiş") ||
+        sp[index].includes("FIŞ")) {
       document_no = sp[index].match(/\d+/);
     }
 
@@ -143,7 +145,7 @@ function regex(text) {
     total_amount: total_amount,
   });
 
-  let p_quantity = null;
+  let p_quantity = 1;
   let p_name = null;
   let p_ratiokdv = null;
   let p_unitPrice = null;
@@ -163,9 +165,12 @@ function regex(text) {
   for (const product of products) {
     console.log("Product:" + product);
 
-    p_unitPrice = product.match(product_amount_regex);
     p_name = product.match(verbal_regex);
-    p_ratiokdv = product.match(product_kdv_regex);
+    p_unitPrice = product.match(product_amount_regex);
+    tmp = product.match(product_kdv_regex);
+    if (tmp.length >= 2 ) {
+      p_ratiokdv = tmp[1]
+    }
 
     result.push({
       name: p_name,
@@ -176,7 +181,7 @@ function regex(text) {
     });
 
     p_name = null;
-    p_quantity = null;
+    p_quantity = 1;
     p_unitPrice = null;
     p_ratiokdv = null;
   }

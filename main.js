@@ -168,7 +168,7 @@ function regex(text) {
     p_name = product.match(verbal_regex);
     p_unitPrice = product.match(product_amount_regex);
     tmp = product.match(product_kdv_regex);
-    if (tmp.length >= 2 ) {
+    if (tmp != null && tmp.length >= 2 ) {
       p_ratiokdv = tmp[1]
     }
 

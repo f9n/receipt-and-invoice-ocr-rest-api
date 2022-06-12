@@ -73,6 +73,7 @@ function regex(text) {
   var products = [];
   var products_unclear = [];
   let product_index;
+  let document_type_flag = 1;
   let _total_kdv;
   let tmp;
 
@@ -81,7 +82,6 @@ function regex(text) {
       result2.push({ line: sp[index] });
     }
   }
-  console.log(result2);
 
   for (let index = 0; index < sp.length; index++) {
     // date
@@ -115,7 +115,6 @@ function regex(text) {
     }
 
   }
-  console.log(product_index);
   product_index--;
   while (
     product_index >= 0 &&
@@ -128,14 +127,12 @@ function regex(text) {
     products_unclear.push(sp[product_index]);
     product_index--;
   }
-  console.log(`Unclear: ${products_unclear}`);
   for (let index = 0; index < products_unclear.length; index++) {
     if (products_unclear[index] && products_unclear[index].length > 7)
       products.push(products_unclear[index]);
   }
 
   console.log(products);
-  console.log(result2[0]);
   console.log(`Date: ${date}`);
 
   let firm;
@@ -149,20 +146,40 @@ function regex(text) {
     total_amount: total_amount,
   });
 
-  // if ((sp.includes("ADET") ||
-  //     sp.includes("Adt")  ||
-  //     sp.includes("KG")) &&
-  //     !sp.includes("*")
-  //     ) {
-  //   console.log("2. ci tip!!!");
-  // }
-
-  let result_products = process_type1_receipt(products)
+  for (let index = 0; index < sp.length; index++) {
+    if ((sp[index].includes("ADET") ||
+        sp[index].includes("Adt")  ||
+        sp[index].includes("KG")) &&
+        !sp[index].includes("*")
+        ) {
+      document_type_flag = 2;
+    }
+  }
+  let result_products;
+  if (document_type_flag == 1) {
+    console.log("Process Type: 1")
+    result_products = process_type1_receipt(products)
+  } else if (document_type_flag == 2) {
+    console.log("Process Type: 2")
+    result_products = process_type2_receipt(products)
+  }
 
   result.push(...result_products)
 
   console.log(result);
   return result;
+}
+
+function process_type2_receipt(products) {
+  let return_result = []
+  let p_quantity = 1;
+  let p_name = null;
+  let p_ratiokdv = null;
+  let p_unitPrice = null;
+  let p_category = null;
+  let tmp = null;
+
+  return []
 }
 
 function process_type1_receipt(products) {

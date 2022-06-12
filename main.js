@@ -113,18 +113,15 @@ if ( products_unclear[index] && products_unclear[index].length > 7)
 
 }
  
-console.log(products);
-console.log(result2[0]);
-console.log(`Tarih: ${tarih[0]}`);
+  console.log(products);
+  console.log(result2[0]);
+  console.log(`Tarih: ${tarih}`);
 
-let tarihjson;
-if (result2[0])
-tarihjson = result2[0].line
-else 
-tarihjson = null;
+  let firmjson;
+  if (result2[0]) firmjson = result2[0].line
 
-  result.push({firm: tarihjson,
-               date: tarih[0], 
+  result.push({firm: firmjson,
+               date: tarih,
                total_kdv: kdv,
                total_amount: tutar});
 

@@ -59,7 +59,6 @@ var product_amount_regex = /\d+[,.]?\d+$/;
 var product_kdv_regex = /[%](\d{2})/;
 var date_regex = /\d{2}([\/.-])\d{2}\1\d{4}/g;
 
-
 function regex(text) {
   /*console.log(text)*/
   let sp = text.split("\n");
@@ -82,6 +81,7 @@ function regex(text) {
       result2.push({ line: sp[index] });
     }
   }
+  console.log(result2);
 
   for (let index = 0; index < sp.length; index++) {
     // date
@@ -106,14 +106,15 @@ function regex(text) {
       }
     }
 
-    if (sp[index].includes("FİŞ") ||
-        sp[index].includes("FIS") ||
-        sp[index].includes("Fiş") ||
-        sp[index].includes("FIŞ")) {
+    if (
+      sp[index].includes("FİŞ") ||
+      sp[index].includes("FIS") ||
+      sp[index].includes("Fiş") ||
+      sp[index].includes("FIŞ")
+    ) {
       // fis no
       document_no = sp[index].match(/\d+/);
     }
-
   }
   product_index--;
   while (
@@ -147,43 +148,104 @@ function regex(text) {
   });
 
   for (let index = 0; index < sp.length; index++) {
-    if ((sp[index].includes("ADET") ||
-        sp[index].includes("Adt")  ||
+    if (
+      (sp[index].includes("ADET") ||
+        sp[index].includes("Adt") ||
         sp[index].includes("KG")) &&
-        !sp[index].includes("*")
-        ) {
+      !sp[index].includes("*")
+    ) {
       document_type_flag = 2;
     }
   }
   let result_products;
   if (document_type_flag == 1) {
-    console.log("Process Type: 1")
-    result_products = process_type1_receipt(products)
+    console.log("Process Type: 1");
+    result_products = process_type1_receipt(products);
   } else if (document_type_flag == 2) {
-    console.log("Process Type: 2")
-    result_products = process_type2_receipt(products)
+    console.log("Process Type: 2");
+    result_products = process_type2_receipt(products);
   }
 
-  result.push(...result_products)
+  result.push(...result_products);
 
   console.log(result);
   return result;
 }
 
 function process_type2_receipt(products) {
-  let return_result = []
+  let return_result = [];
   let p_quantity = 1;
   let p_name = null;
   let p_ratiokdv = null;
   let p_unitPrice = null;
   let p_category = null;
   let tmp = null;
+  let quantity_flag = false;
 
-  return []
+  let _products = products.reverse();
+
+  for (const product of _products) {
+    // 1. ci adeti
+    if (
+      (product.includes("ADET") ||
+        product.includes("Adt") ||
+        product.includes("KG")) &&
+      !product.includes("*")
+    ) {
+      quantity_flag = true;
+      p_unitPrice = product.match(product_amount_regex);
+      // @TODO: kritik. bunu float olarak bulmaliyiz. suanlik ilk index.
+      p_quantity = product[0];
+      // 1. cinin urunun
+    } else if (quantity_flag == true) {
+      p_name = product.match(verbal_regex);
+      tmp = product.match(product_kdv_regex);
+      if (tmp != null && tmp.length >= 2) {
+        p_ratiokdv = tmp[1];
+      }
+      return_result.push({
+        name: p_name,
+        quantity: p_quantity,
+        unitPrice: p_unitPrice,
+        ratiokdv: p_ratiokdv,
+        category: p_category,
+      });
+
+      p_name = null;
+      p_quantity = 1;
+      p_unitPrice = null;
+      p_ratiokdv = null;
+
+      quantity_flag = false;
+      // ciplak urun (adeti olmayan)
+    } else {
+      p_name = product.match(verbal_regex);
+      p_unitPrice = product.match(product_amount_regex);
+      tmp = product.match(product_kdv_regex);
+      if (tmp != null && tmp.length >= 2) {
+        p_ratiokdv = tmp[1];
+      }
+
+      return_result.push({
+        name: p_name,
+        quantity: p_quantity,
+        unitPrice: p_unitPrice,
+        ratiokdv: p_ratiokdv,
+        category: p_category,
+      });
+
+      p_name = null;
+      p_quantity = 1;
+      p_unitPrice = null;
+      p_ratiokdv = null;
+    }
+  }
+
+  return [];
 }
 
 function process_type1_receipt(products) {
-  let return_result = []
+  let return_result = [];
   let p_quantity = 1;
   let p_name = null;
   let p_ratiokdv = null;
@@ -197,8 +259,8 @@ function process_type1_receipt(products) {
     p_name = product.match(verbal_regex);
     p_unitPrice = product.match(product_amount_regex);
     tmp = product.match(product_kdv_regex);
-    if (tmp != null && tmp.length >= 2 ) {
-      p_ratiokdv = tmp[1]
+    if (tmp != null && tmp.length >= 2) {
+      p_ratiokdv = tmp[1];
     }
 
     return_result.push({
@@ -215,5 +277,5 @@ function process_type1_receipt(products) {
     p_ratiokdv = null;
   }
 
-  return return_result
+  return return_result;
 }

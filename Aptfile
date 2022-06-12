@@ -1,0 +1,6 @@
+# https://stackoverflow.com/questions/66087588/tesseract-error-while-loading-shared-libraries-libarchive-so-13-python
+*libarchive13*
+# tesseract dependencies
+tesseract-ocr
+tesseract-ocr-tur
+# tesseract-ocr-all

@@ -134,19 +134,20 @@ function regex(text) {
     console.log("element:" + element);
     if (element.includes("*")) {
       length_pro = element.split("*");
-      p_tutar = length_pro[1];
+
+      if (length_pro[1]) p_tutar = length_pro[1];
     }
 
     if (!length_pro) length_pro = element;
 
     if (length_pro[0].includes("%")) {
       length_pro = length_pro[0].split("%");
-      p_kdv = length_pro[1];
+      if (length_pro[1]) p_kdv = length_pro[1];
     }
 
     if (length_pro[0].includes("X")) {
       let length_pro = length_pro[0].split("X");
-      p_adet = length_pro[1];
+      if (length_pro[1]) p_adet = length_pro[1];
     }
 
     if (length_pro[0].length > 1) p_name = length_pro[0];

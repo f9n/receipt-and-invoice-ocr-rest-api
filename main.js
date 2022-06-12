@@ -45,6 +45,8 @@ app.listen(PORT, () => {
   console.log(`Listening on ${PORT}`);
 });
 
+var floating_regex = /\d+[,.]?\d+/;
+
 function regex(text) {
     
   /*console.log(text)*/
@@ -53,8 +55,8 @@ function regex(text) {
   var result = [];
   var result2 = [];
   var tarih = null;
-  let kdv   = null;
-  let tutar = null;
+  let total_kdv   = null;
+  let total_amount = null;
   var products = [];
   var products_unclear = [];
   var product_json;
@@ -79,29 +81,17 @@ function regex(text) {
     
     console.log("11" + "sp:" + sp[index] + "index" + index);
     if (sp[index].includes("KDV") ){
-     console.log("kdv");
-      if (!product_index)
-      product_index = index;
-       str = sp[index].split('*');
-       
-       if (str[1] != null){
-      kdv = str[1];
-     }
-     console.log("2");
+      total_kdv = sp[index].match(floating_regex);
+      console.log(`total_kdv: ${total_kdv}`)
     } else {
-      console.log("3");
-      if (sp[index].includes("TOP") )
-       str1 = sp[index].split('*');
-       console.log("alooo" + str1);
-       if (str1 != null) {
-         if (str1.length >= 2 ) {
-          tutar = str1[1];
-         }
-       }
+      if (sp[index].includes("TOP")) {
+        total_amount = sp[index].match(floating_regex);
+        console.log(`total_amount: ${total_amount}`)
+      }
     }
     
   }
-console.log(product_index);
+  console.log(product_index);
   product_index--;
   while ( product_index >= 0 && (!sp[product_index].includes("FİŞ") && !sp[product_index].includes("SAAT") && !sp[product_index].includes("FIS") ) ){
 
@@ -110,11 +100,10 @@ console.log(product_index);
     
   }
   console.log("u nclear:" + products_unclear);
-for (let index = 0; index < products_unclear.length; index++) {
-if ( products_unclear[index] && products_unclear[index].length > 7)
-          products.push(products_unclear[index]);  
-
-}
+  for (let index = 0; index < products_unclear.length; index++) {
+  if ( products_unclear[index] && products_unclear[index].length > 7)
+            products.push(products_unclear[index]);  
+  }
  
   console.log(products);
   console.log(result2[0]);
@@ -126,8 +115,8 @@ if ( products_unclear[index] && products_unclear[index].length > 7)
   result.push({firm: firmjson,
                date: tarih,
                no: null,
-               total_kdv: kdv,
-               total_amount: tutar});
+               total_kdv: total_kdv,
+               total_amount: total_amount});
 
   let p_tutar = null;
   let p_adet = null;

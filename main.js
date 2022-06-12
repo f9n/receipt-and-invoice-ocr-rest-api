@@ -45,13 +45,19 @@ app.listen(PORT, () => {
   console.log(`Listening on ${PORT}`);
 });
 
+function replaceAll(string, search, replace) {
+  return string.split(search).join(replace);
+}
+
 // https://github.com/f9n/receipt-and-invoice-rest-api/blob/main/contrib/images/receipts/WhatsApp%20Image%202021-12-07%20at%2009.38.10%20(6).jpeg
 
 var floating_regex = /\d+[,.]?\d+/;
 var total_kdv_regex = /\d+[,.]?\d+/;
 var verbal_regex = /[a-zA-Z \#]+/;
+// var document_no_regex = /[ ]?[Nn][Oo]\:[ ]?\d+/;
 var product_amount_regex = /\d+[,.]?\d+$/;
 var product_kdv_regex = /%\d{2}/;
+
 
 function regex(text) {
   /*console.log(text)*/
@@ -60,14 +66,13 @@ function regex(text) {
   var result = [];
   var result2 = [];
   var tarih = null;
+  let document_no = null;
   let total_kdv = null;
   let total_amount = null;
   var products = [];
   var products_unclear = [];
-  var product_json;
-  let str = null;
-  let str1 = null;
   let product_index;
+  let _total_kdv;
 
   for (let index = 0; index < sp.length; index++) {
     if (sp[index] != "") result2.push({ line: sp[index] });
@@ -83,8 +88,8 @@ function regex(text) {
 
     if (sp[index].includes("KDV") || sp[index].includes("KDY")) {
       if (product_index == null) {
-        sp[index].replace(" ", "");
-        total_kdv = sp[index].match(total_kdv_regex);
+        _total_kdv = replaceAll(sp[index], " ", "");
+        total_kdv = _total_kdv.match(total_kdv_regex);
         product_index = index;
         console.log(`total_kdv: ${total_kdv}`);
         console.log(`index: ${index}`);
@@ -95,6 +100,14 @@ function regex(text) {
         console.log(`total_amount: ${total_amount}`);
       }
     }
+
+    // document_no = sp[index].match(document_no_regex);
+    if (sp[index].includes("FİŞ") ||
+        sp[index].includes("FIS") ||
+        sp[index].includes("Fiş")) {
+      document_no = sp[index].match(/\d+/);
+    }
+
   }
   console.log(product_index);
   product_index--;
@@ -125,7 +138,7 @@ function regex(text) {
   result.push({
     firm: firmjson,
     date: tarih,
-    no: null,
+    no: document_no,
     total_kdv: total_kdv,
     total_amount: total_amount,
   });

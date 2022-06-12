@@ -46,7 +46,10 @@ app.listen(PORT, () => {
 });
 
 function regex(text) {
-  let sp = text.split("\r\n");
+
+  // let sp = text.split("\r\n");
+  let sp = text.split("\n");
+
   var result = [];
   var result2 = [];
   var tarih = null;
@@ -108,12 +111,11 @@ function regex(text) {
 
   console.log(products);
 
-  let tarihjson;
-  if (result2[0]) tarihjson = result2[0].line;
-  else tarihjson = null;
+  let firm = null;
+  if (result2[0]) firm = result2[0].line;
 
   result.push({
-    firm: tarihjson,
+    firm: firm,
     date: tarih[0],
     total_kdv: kdv,
     total_amount: tutar,

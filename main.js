@@ -56,7 +56,7 @@ var total_kdv_regex = /\d+[,.]?\d+/;
 var verbal_regex = /[^\d]+/;
 // var document_no_regex = /[ ]?[Nn][Oo]\:[ ]?\d+/;
 var product_amount_regex = /\d+[,.]?\d+$/;
-var product_kdv_regex = /[%Xx](\d{2})[ ]?.+/;
+var product_kdv_regex = /[%](\d{2})/;
 
 
 function regex(text) {

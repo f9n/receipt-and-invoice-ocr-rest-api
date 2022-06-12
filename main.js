@@ -93,7 +93,7 @@ function regex(text) {
       if (sp[index].includes("TOP") )
        str1 = sp[index].split('*');
        console.log("alooo" + str1);
-        if (str1 != null)
+        if (str1[1] != null)
       tutar = str1[1];
     }
     
@@ -122,6 +122,7 @@ if ( products_unclear[index] && products_unclear[index].length > 7)
 
   result.push({firm: firmjson,
                date: tarih,
+               no: null,
                total_kdv: kdv,
                total_amount: tutar});
 

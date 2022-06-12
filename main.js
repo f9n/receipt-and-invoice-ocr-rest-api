@@ -57,6 +57,7 @@ var verbal_regex = /[^\d]+/;
 // var document_no_regex = /[ ]?[Nn][Oo]\:[ ]?\d+/;
 var product_amount_regex = /\d+[,.]?\d+$/;
 var product_kdv_regex = /[%](\d{2})/;
+var date_regex = /\d{2}([\/.-])\d{2}\1\d{4}/g;
 
 
 function regex(text) {
@@ -65,7 +66,7 @@ function regex(text) {
 
   var result = [];
   var result2 = [];
-  var tarih = null;
+  var date = null;
   let document_no = null;
   let total_kdv = null;
   let total_amount = null;
@@ -76,17 +77,19 @@ function regex(text) {
   let tmp;
 
   for (let index = 0; index < sp.length; index++) {
-    if (sp[index] != "") result2.push({ line: sp[index] });
+    if (sp[index] != "" && sp[index] != " ") {
+      result2.push({ line: sp[index] });
+    }
   }
   console.log(result2);
 
   for (let index = 0; index < sp.length; index++) {
-    // if (sp[index].includes("TARİH") ){
-    if (sp[index].match(/\d{2}([\/.-])\d{2}\1\d{4}/g)) {
-      var tarih = sp[index].match(/\d{2}([\/.-])\d{2}\1\d{4}/g);
-      //result.push({TARİH: tarih});
+    // date
+    if (sp[index].match(date_regex)) {
+      date = sp[index].match(date_regex);
     }
 
+    // kdv
     if (sp[index].includes("KDV") || sp[index].includes("KDY")) {
       if (product_index == null) {
         _total_kdv = replaceAll(sp[index], " ", "");
@@ -96,17 +99,18 @@ function regex(text) {
         console.log(`index: ${index}`);
       }
     } else {
+      // total amount
       if (sp[index].includes("TOP")) {
         total_amount = sp[index].match(floating_regex);
         console.log(`total_amount: ${total_amount}`);
       }
     }
 
-    // document_no = sp[index].match(document_no_regex);
     if (sp[index].includes("FİŞ") ||
         sp[index].includes("FIS") ||
         sp[index].includes("Fiş") ||
         sp[index].includes("FIŞ")) {
+      // fis no
       document_no = sp[index].match(/\d+/);
     }
 
@@ -132,14 +136,14 @@ function regex(text) {
 
   console.log(products);
   console.log(result2[0]);
-  console.log(`Tarih: ${tarih}`);
+  console.log(`Date: ${date}`);
 
-  let firmjson;
-  if (result2[0]) firmjson = result2[0].line;
+  let firm;
+  if (result2[0]) firm = result2[0].line;
 
   result.push({
-    firm: firmjson,
-    date: tarih,
+    firm: firm,
+    date: date,
     no: document_no,
     total_kdv: total_kdv,
     total_amount: total_amount,
@@ -151,16 +155,13 @@ function regex(text) {
   let p_unitPrice = null;
   let p_category = null;
 
-  /*
-                                                  [
-    2022-06-12T18:37:31.703243+00:00 app[web.1]:   'Kredi Kartı *81,90',
-    2022-06-12T18:37:31.703244+00:00 app[web.1]:   'TOPLAM «81,90',
-    2022-06-12T18:37:31.703244+00:00 app[web.1]:   'TOPKDV x12, 49',
-    2022-06-12T18:37:31.703244+00:00 app[web.1]:   'GLADE SPORT MANGOK#LAVAN 415 x29,90',
-    2022-06-12T18:37:31.703244+00:00 app[web.1]:   'AUTOMIX PDA TUTUCU 118 *52,00',
-    2022-06-12T18:37:31.703244+00:00 app[web.1]:   'Fiş NO : 0182'
-    2022-06-12T18:37:31.703244+00:00 app[web.1]: ]
-  */
+  if ((sp.includes("ADET") ||
+      sp.includes("Adt")  ||
+      sp.includes("KG")) &&
+      !sp.includes("*")
+      ) {
+    console.log("2. ci tip!!!");
+  }
 
   for (const product of products) {
     console.log("Product:" + product);

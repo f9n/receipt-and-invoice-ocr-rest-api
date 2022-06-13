@@ -77,7 +77,7 @@ function regex(text) {
   let tmp;
 
   for (let index = 0; index < sp.length; index++) {
-    if (sp[index] != "" && sp[index] != " ") {
+    if (sp[index] != "" && sp[index] != " " && sp[index].length > 2) {
       result2.push({ line: sp[index] });
     }
   }
@@ -186,7 +186,7 @@ function process_type2_receipt(products) {
 
   for (const product of _products) {
     console.log("Product:" + product);
-
+    console.log(`Quantity Flag: ${quantity_flag}`)
     // 1. ci adeti
     if (
       (product.includes("ADET") ||
@@ -199,7 +199,7 @@ function process_type2_receipt(products) {
       // @TODO: kritik. bunu float olarak bulmaliyiz. suanlik ilk index.
       p_quantity = product[0];
       // 1. cinin urunun
-    } else if (quantity_flag == true) {
+    } else if (quantity_flag) {
       p_name = product.match(verbal_regex);
       tmp = product.match(product_kdv_regex);
       if (tmp != null && tmp.length >= 2) {
@@ -243,7 +243,7 @@ function process_type2_receipt(products) {
     }
   }
 
-  return [];
+  return return_result;
 }
 
 function process_type1_receipt(products) {

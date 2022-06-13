@@ -103,7 +103,9 @@ function regex(text) {
     // kdv
     if (
       clean_text_lines[index].includes("KDV") ||
-      clean_text_lines[index].includes("KDY")
+      clean_text_lines[index].includes("KDY") ||
+      clean_text_lines[index].includes("TRT") ||
+      clean_text_lines[index].includes("TISKUV")
     ) {
       if (product_index == null) {
         let _total_kdv = replaceAll(clean_text_lines[index], " ", "").match(
@@ -118,7 +120,10 @@ function regex(text) {
       }
     } else {
       // total amount
-      if (clean_text_lines[index].includes("TOP")) {
+      if (
+        clean_text_lines[index].includes("TOP") ||
+        clean_text_lines[index].includes("TİPLAM")
+      ) {
         let _total_amount = clean_text_lines[index].match(floating_regex);
         if (_total_amount && _total_amount.length > 0) {
           total_amount = _total_amount[0];
@@ -194,6 +199,13 @@ function regex(text) {
   return result;
 }
 
+function get_first_match_or_default(match, base) {
+  if (match && match.length > 0) {
+    return match[0];
+  }
+  return base;
+}
+
 function process_type2_receipt(products) {
   let return_result = [];
 
@@ -221,12 +233,17 @@ function process_type2_receipt(products) {
       !product.includes("*")
     ) {
       quantity_flag = true;
-      p_unitPrice = product.match(product_amount_regex);
+      p_unitPrice = get_first_match_or_default(
+        product.match(product_amount_regex),
+        p_unitPrice
+      );
+
       // @TODO: kritik. bunu float olarak bulmaliyiz. suanlik ilk index.
       p_quantity = product[0];
       // 1. cinin urunun
     } else if (quantity_flag) {
-      p_name = product.match(verbal_regex);
+      p_name = get_first_match_or_default(product.match(verbal_regex), p_name);
+
       tmp = product.match(product_kdv_regex);
       if (tmp && tmp.length >= 2) {
         p_ratiokdv = tmp[1];
@@ -247,8 +264,11 @@ function process_type2_receipt(products) {
       quantity_flag = false;
       // ciplak urun (adeti olmayan)
     } else {
-      p_name = product.match(verbal_regex);
-      p_unitPrice = product.match(product_amount_regex);
+      p_name = get_first_match_or_default(product.match(verbal_regex), p_name);
+      p_unitPrice = get_first_match_or_default(
+        product.match(product_amount_regex),
+        p_unitPrice
+      );
       tmp = product.match(product_kdv_regex);
       if (tmp != null && tmp.length >= 2) {
         p_ratiokdv = tmp[1];
@@ -289,8 +309,11 @@ function process_type1_receipt(products) {
   for (const product of products) {
     console.log("Product:" + product);
 
-    p_name = product.match(verbal_regex);
-    p_unitPrice = product.match(product_amount_regex);
+    p_name = get_first_match_or_default(product.match(verbal_regex), p_name);
+    p_unitPrice = get_first_match_or_default(
+      product.match(product_amount_regex),
+      p_unitPrice
+    );
     tmp = product.match(product_kdv_regex);
     if (tmp != null && tmp.length >= 2) {
       p_ratiokdv = tmp[1];

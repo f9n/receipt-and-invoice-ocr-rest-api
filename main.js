@@ -77,7 +77,12 @@ function regex(text) {
   let tmp;
 
   for (let index = 0; index < sp.length; index++) {
-    if (sp[index] != "" && sp[index] != " " && sp[index].length > 2) {
+    if (
+      sp[index] != "" &&
+      sp[index] != " " &&
+      sp[index].length > 2 &&
+      sp[index].match(/[^ ]+/)
+    ) {
       result2.push({ line: sp[index] });
     }
   }
@@ -182,11 +187,11 @@ function process_type2_receipt(products) {
   let quantity_flag = false;
 
   let _products = products.reverse();
-  console.log(_products)
+  console.log(_products);
 
   for (const product of _products) {
     console.log("Product:" + product);
-    console.log(`Quantity Flag: ${quantity_flag}`)
+    console.log(`Quantity Flag: ${quantity_flag}`);
     // 1. ci adeti
     if (
       (product.includes("ADET") ||
@@ -255,7 +260,7 @@ function process_type1_receipt(products) {
   let p_category = null;
   let tmp = null;
 
-  console.log(products)
+  console.log(products);
 
   for (const product of products) {
     console.log("Product:" + product);

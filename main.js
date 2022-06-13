@@ -215,7 +215,7 @@ function process_type2_receipt(products) {
   let p_quantity = 1;
   let p_ratiokdv = 0;
   let p_unitPrice = "";
-  let p_category = "";
+  let p_category = "yiyecek";
 
   let tmp = null;
   let quantity_flag = false;
@@ -301,7 +301,7 @@ function process_type1_receipt(products) {
   let p_quantity = 1;
   let p_ratiokdv = 0;
   let p_unitPrice = "";
-  let p_category = "";
+  let p_category = "yiyecek";
 
   let tmp = null;
 

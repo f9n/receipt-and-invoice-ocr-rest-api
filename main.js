@@ -137,6 +137,8 @@ function regex(text) {
     !clean_text_lines[product_index].includes("Fiş") &&
     !clean_text_lines[product_index].includes("NO")
   ) {
+    console.log(`ProductIndex: ${product_index}`)
+    console.log(`ProductUnclear: ${clean_text_lines[product_index]}`)
     products_unclear.push(clean_text_lines[product_index]);
     product_index--;
   }

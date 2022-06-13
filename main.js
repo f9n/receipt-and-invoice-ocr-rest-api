@@ -83,16 +83,14 @@ function regex(text) {
       sp[index].length > 2 &&
       sp[index].match(/[^ ]+/)
     ) {
-      clean_text_lines.push({ line: sp[index] });
+      clean_text_lines.push(sp[index]);
     }
   }
   console.log("Clean Text Lines");
   console.log(clean_text_lines);
 
   let firm;
-  if (clean_text_lines[0]) firm = clean_text_lines[0].line;
-
-  // la burda sp.lenght ve sp olmayacak. results2 olacak???
+  if (clean_text_lines[0]) firm = clean_text_lines[0];
 
   for (let index = 0; index < clean_text_lines.length; index++) {
     // date

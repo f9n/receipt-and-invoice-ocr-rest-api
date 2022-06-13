@@ -94,8 +94,9 @@ function regex(text) {
 
   for (let index = 0; index < clean_text_lines.length; index++) {
     // date
-    if (clean_text_lines[index].match(date_regex)) {
-      date = clean_text_lines[index].match(date_regex);
+    var _date = clean_text_lines[index].match(date_regex);
+    if (_date.length > 0) {
+      date = clean_text_lines[index].match(date_regex)[0];
     }
 
     // kdv
@@ -104,8 +105,10 @@ function regex(text) {
       clean_text_lines[index].includes("KDY")
     ) {
       if (product_index == null) {
-        _total_kdv = replaceAll(clean_text_lines[index], " ", "");
-        total_kdv = _total_kdv.match(total_kdv_regex);
+        _total_kdv = replaceAll(clean_text_lines[index], " ", "").match(total_kdv_regex);
+        if (_total_kdv.length > 0) {
+          total_kdv = _total_kdv[0];
+        }
         product_index = index;
         console.log(`total_kdv: ${total_kdv}`);
         console.log(`index: ${index}`);
@@ -113,7 +116,10 @@ function regex(text) {
     } else {
       // total amount
       if (clean_text_lines[index].includes("TOP")) {
-        total_amount = clean_text_lines[index].match(floating_regex);
+        var _total_amount = clean_text_lines[index].match(floating_regex);
+        if (_total_amount.length > 0) {
+          total_amount = _total_amount[0]
+        }
         console.log(`total_amount: ${total_amount}`);
       }
     }
@@ -125,7 +131,11 @@ function regex(text) {
       clean_text_lines[index].includes("FIŞ")
     ) {
       // fis no
-      document_no = clean_text_lines[index].match(/\d+/);
+
+      var _document_no = clean_text_lines[index].match(/\d+/);
+      if (_document_no.length > 0) {
+        document_no = _document_no[0];
+      }
     }
   }
   product_index--;

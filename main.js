@@ -65,15 +65,17 @@ function regex(text) {
 
   var result = [];
   var clean_text_lines = [];
-  var date = null;
-  let document_no = null;
-  let total_kdv = null;
-  let total_amount = null;
+  // Receipt
+  let firm;
+  var date = "";
+  let document_no = "";
+  let total_kdv = "";
+  let total_amount = "";
+  // Receipt Products
   var products = [];
   var products_unclear = [];
   let product_index;
   let document_type_flag = 1;
-  let _total_kdv;
   let tmp;
 
   for (let index = 0; index < sp.length; index++) {
@@ -89,7 +91,6 @@ function regex(text) {
   console.log("Clean Text Lines");
   console.log(clean_text_lines);
 
-  let firm;
   if (clean_text_lines[0]) firm = clean_text_lines[0];
 
   for (let index = 0; index < clean_text_lines.length; index++) {
@@ -105,7 +106,9 @@ function regex(text) {
       clean_text_lines[index].includes("KDY")
     ) {
       if (product_index == null) {
-        _total_kdv = replaceAll(clean_text_lines[index], " ", "").match(total_kdv_regex);
+        let _total_kdv = replaceAll(clean_text_lines[index], " ", "").match(
+          total_kdv_regex
+        );
         if (_total_kdv && _total_kdv.length > 0) {
           total_kdv = _total_kdv[0];
         }
@@ -116,9 +119,9 @@ function regex(text) {
     } else {
       // total amount
       if (clean_text_lines[index].includes("TOP")) {
-        var _total_amount = clean_text_lines[index].match(floating_regex);
+        let _total_amount = clean_text_lines[index].match(floating_regex);
         if (_total_amount && _total_amount.length > 0) {
-          total_amount = _total_amount[0]
+          total_amount = _total_amount[0];
         }
         console.log(`total_amount: ${total_amount}`);
       }
@@ -131,8 +134,7 @@ function regex(text) {
       clean_text_lines[index].includes("FIŞ")
     ) {
       // fis no
-
-      var _document_no = clean_text_lines[index].match(/\d+/);
+      let _document_no = clean_text_lines[index].match(/\d+/);
       if (_document_no && _document_no.length > 0) {
         document_no = _document_no[0];
       }
@@ -147,8 +149,8 @@ function regex(text) {
     !clean_text_lines[product_index].includes("Fiş") &&
     !clean_text_lines[product_index].includes("NO")
   ) {
-    console.log(`ProductIndex: ${product_index}`)
-    console.log(`ProductUnclear: ${clean_text_lines[product_index]}`)
+    console.log(`ProductIndex: ${product_index}`);
+    console.log(`ProductUnclear: ${clean_text_lines[product_index]}`);
     products_unclear.push(clean_text_lines[product_index]);
     product_index--;
   }
@@ -194,11 +196,14 @@ function regex(text) {
 
 function process_type2_receipt(products) {
   let return_result = [];
+
+  // Product
+  let p_name = "";
   let p_quantity = 1;
-  let p_name = null;
-  let p_ratiokdv = null;
-  let p_unitPrice = null;
-  let p_category = null;
+  let p_ratiokdv = 0;
+  let p_unitPrice = "";
+  let p_category = "";
+
   let tmp = null;
   let quantity_flag = false;
 
@@ -223,7 +228,7 @@ function process_type2_receipt(products) {
     } else if (quantity_flag) {
       p_name = product.match(verbal_regex);
       tmp = product.match(product_kdv_regex);
-      if (tmp != null && tmp.length >= 2) {
+      if (tmp && tmp.length >= 2) {
         p_ratiokdv = tmp[1];
       }
       return_result.push({
@@ -234,10 +239,10 @@ function process_type2_receipt(products) {
         category: p_category,
       });
 
-      p_name = null;
+      p_name = "";
       p_quantity = 1;
-      p_unitPrice = null;
-      p_ratiokdv = null;
+      p_ratiokdv = 0;
+      p_unitPrice = "";
 
       quantity_flag = false;
       // ciplak urun (adeti olmayan)
@@ -257,10 +262,10 @@ function process_type2_receipt(products) {
         category: p_category,
       });
 
-      p_name = null;
+      p_name = "";
       p_quantity = 1;
-      p_unitPrice = null;
-      p_ratiokdv = null;
+      p_ratiokdv = 0;
+      p_unitPrice = "";
     }
   }
 

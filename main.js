@@ -274,11 +274,14 @@ function process_type2_receipt(products) {
 
 function process_type1_receipt(products) {
   let return_result = [];
+
+  // product
+  let p_name = "";
   let p_quantity = 1;
-  let p_name = null;
-  let p_ratiokdv = null;
-  let p_unitPrice = null;
-  let p_category = null;
+  let p_ratiokdv = 0;
+  let p_unitPrice = "";
+  let p_category = "";
+
   let tmp = null;
 
   console.log(products);
@@ -301,10 +304,10 @@ function process_type1_receipt(products) {
       category: p_category,
     });
 
-    p_name = null;
+    p_name = "";
     p_quantity = 1;
-    p_unitPrice = null;
-    p_ratiokdv = null;
+    p_ratiokdv = 0;
+    p_unitPrice = "";
   }
 
   return return_result;

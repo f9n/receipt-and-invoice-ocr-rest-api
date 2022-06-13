@@ -240,7 +240,7 @@ function process_type2_receipt(products) {
       );
 
       // @TODO: kritik. bunu float olarak bulmaliyiz. suanlik ilk index.
-      p_quantity = product[0];
+      p_quantity = parseInt(product[0]);
       // 1. cinin urunun
     } else if (quantity_flag) {
       p_name = get_first_match_or_default(product.match(verbal_regex), p_name);

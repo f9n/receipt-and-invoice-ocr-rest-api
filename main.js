@@ -63,7 +63,7 @@ function regex(text) {
   /*console.log(text)*/
   let sp = text.split("\n");
 
-  var result = [];
+  var result = {};
   var clean_text_lines = [];
   // Receipt
   let firm;
@@ -166,13 +166,14 @@ function regex(text) {
 
   console.log(`Date: ${date}`);
 
-  result.push({
+  result = {
     firm: firm,
     date: date,
     no: document_no,
     total_kdv: total_kdv,
     total_amount: total_amount,
-  });
+    products: [],
+  }
 
   for (let index = 0; index < clean_text_lines.length; index++) {
     if (
@@ -193,7 +194,7 @@ function regex(text) {
     result_products = process_type2_receipt(products);
   }
 
-  result.push(...result_products);
+  result.products.push(...result_products);
 
   console.log(result);
   return result;

@@ -95,7 +95,7 @@ function regex(text) {
   for (let index = 0; index < clean_text_lines.length; index++) {
     // date
     var _date = clean_text_lines[index].match(date_regex);
-    if (_date.length > 0) {
+    if (_date && _date.length > 0) {
       date = clean_text_lines[index].match(date_regex)[0];
     }
 
@@ -106,7 +106,7 @@ function regex(text) {
     ) {
       if (product_index == null) {
         _total_kdv = replaceAll(clean_text_lines[index], " ", "").match(total_kdv_regex);
-        if (_total_kdv.length > 0) {
+        if (_total_kdv && _total_kdv.length > 0) {
           total_kdv = _total_kdv[0];
         }
         product_index = index;
@@ -117,7 +117,7 @@ function regex(text) {
       // total amount
       if (clean_text_lines[index].includes("TOP")) {
         var _total_amount = clean_text_lines[index].match(floating_regex);
-        if (_total_amount.length > 0) {
+        if (_total_amount && _total_amount.length > 0) {
           total_amount = _total_amount[0]
         }
         console.log(`total_amount: ${total_amount}`);
@@ -133,7 +133,7 @@ function regex(text) {
       // fis no
 
       var _document_no = clean_text_lines[index].match(/\d+/);
-      if (_document_no.length > 0) {
+      if (_document_no && _document_no.length > 0) {
         document_no = _document_no[0];
       }
     }
